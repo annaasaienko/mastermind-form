@@ -206,7 +206,7 @@ function buildQuestion(q, idx) {
   const hint = q.hint ? `<div class="q-hint">${q.hint}</div>` : '';
   let body = '';
 
-  if (q.type === 'text' || q.type === 'email') {
+  if (q.type === 'text' || q.type === 'email')  {
     body = `<input class="q-input" id="inp-${idx}" type="${q.type==='email'?'email':'text'}" placeholder="${q.ph||''}"
       oninput="textChanged(${idx})" onkeydown="if(event.key==='Enter'){event.preventDefault();tryNext(${idx})}">
     <div class="btn-row"><button class="btn-next" id="btn-next-${idx}" onclick="tryNext(${idx})" disabled>Далі →</button></div>`;
