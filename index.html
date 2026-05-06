@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Анкета · Мастермайнд «Ким я хочу бути»</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #0f0d0b;
+  --cream: #f2ead8;
+  --bordeaux: #8c0e24;
+  --gold: #b8945a;
+  --muted: rgba(242,234,216,0.5);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; background: var(--ink); color: var(--cream); font-family: 'Jost', sans-serif; font-weight: 300; font-size: 16px; line-height: 1.6; overflow: hidden; }
+
+/* Progress */
+#progress-bar { position: fixed; top: 0; left: 0; height: 2px; background: var(--bordeaux); transition: width 0.4s ease; z-index: 100; }
+
+/* Back */
+#btn-back { position: fixed; top: 20px; left: 24px; background: none; border: none; color: var(--muted); font-family: 'Jost', sans-serif; font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer; padding: 8px 0; transition: color 0.2s; z-index: 100; display: none; }
+#btn-back:hover { color: var(--cream); }
+#btn-back::before { content: '← '; }
+
+/* Counter */
+#step-counter { position: fixed; top: 20px; right: 24px; font-size: 11px; letter-spacing: 0.14em; color: var(--muted); z-index: 100; display: none; }
+#step-counter span { color: var(--bordeaux); }
+
+/* Screens */
+.screen { position: fixed; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 60px 40px 40px; opacity: 0; pointer-events: none; transform: translateY(24px); transition: opacity 0.35s ease, transform 0.35s ease; min-height: 100dvh; }
+.screen.active { opacity: 1; pointer-events: all; transform: translateY(0); }
+.screen.exit-up { opacity: 0; transform: translateY(-24px); pointer-events: none; }
+
+/* Cover */
+#screen-cover { text-align: center; overflow: hidden; }
+#screen-cover::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 80% 60% at 50% 40%, rgba(140,14,36,0.18) 0%, transparent 70%); pointer-events: none; }
+.scatter { position: absolute; font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 12px; font-weight: 300; color: rgba(242,234,216,0.1); white-space: nowrap; pointer-events: none; }
+.s1{top:8%;left:-1%;transform:rotate(-7deg);font-size:13px}
+.s2{top:15%;right:-3%;transform:rotate(5deg);color:rgba(184,148,90,0.15)}
+.s3{top:30%;left:-5%;transform:rotate(-4deg)}
+.s4{bottom:30%;right:-2%;transform:rotate(8deg);color:rgba(184,148,90,0.12)}
+.s5{bottom:18%;left:-2%;transform:rotate(-6deg);font-size:13px}
+.s6{top:52%;right:-1%;transform:rotate(4deg)}
+.s7{top:68%;left:-3%;transform:rotate(-9deg);color:rgba(184,148,90,0.11)}
+.s8{bottom:8%;right:3%;transform:rotate(4deg)}
+.cover-eyebrow { font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--bordeaux); margin-bottom: 28px; position: relative; }
+.cover-title { font-family: 'Cormorant Garamond', serif; font-weight: 300; font-size: clamp(28px, 4.5vw, 46px); line-height: 1.2; position: relative; max-width: 600px; }
+.cover-title em { font-style: italic; color: var(--gold); }
+.cover-divider { width: 48px; height: 1px; background: var(--bordeaux); margin: 24px auto; position: relative; }
+.cover-sub { font-size: 14px; color: var(--muted); max-width: 400px; line-height: 1.8; position: relative; }
+.cover-sub strong { color: var(--cream); font-weight: 400; }
+.cover-time { margin-top: 28px; font-size: 12px; letter-spacing: 0.1em; color: var(--gold); opacity: 0.7; position: relative; }
+.btn-start { margin-top: 36px; padding: 14px 44px; background: var(--bordeaux); color: var(--cream); border: none; font-family: 'Jost', sans-serif; font-size: 12px; font-weight: 400; letter-spacing: 0.16em; text-transform: uppercase; cursor: pointer; transition: background 0.2s; position: relative; }
+.btn-start:hover { background: #a81a30; }
+
+/* ── Question layout: fixed header + scrollable body ── */
+.screen-q { justify-content: flex-start; padding-top: 56px; padding-bottom: 0; }
+.q-header { flex-shrink: 0; width: 100%; max-width: 620px; padding: 16px 0 12px; }
+.q-num-label { font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--bordeaux); margin-bottom: 14px; }
+.q-text { font-family: 'Cormorant Garamond', serif; font-size: clamp(20px, 3vw, 30px); font-weight: 300; line-height: 1.3; color: var(--cream); margin-bottom: 4px; }
+.q-hint { font-size: 12px; color: var(--muted); font-style: italic; margin-top: 4px; }
+.q-divider { width: 100%; height: 1px; background: rgba(242,234,216,0.08); margin: 12px 0 0; }
+
+.q-body { flex: 1; width: 100%; max-width: 620px; overflow-y: auto; padding: 16px 2px 32px; }
+.q-body::-webkit-scrollbar { width: 3px; }
+.q-body::-webkit-scrollbar-thumb { background: rgba(242,234,216,0.12); }
+
+/* Inputs */
+.q-input { display: block; width: 100%; background: transparent; border: none; border-bottom: 1.5px solid rgba(242,234,216,0.25); color: var(--cream); font-family: 'Jost', sans-serif; font-size: 18px; font-weight: 300; padding: 12px 0; outline: none; transition: border-color 0.2s; }
+.q-input:focus { border-bottom-color: var(--bordeaux); }
+.q-input::placeholder { color: rgba(242,234,216,0.2); }
+.q-textarea { display: block; width: 100%; background: rgba(242,234,216,0.05); border: 1.5px solid rgba(242,234,216,0.15); color: var(--cream); font-family: 'Jost', sans-serif; font-size: 15px; font-weight: 300; padding: 16px; outline: none; resize: vertical; min-height: 90px; line-height: 1.7; transition: border-color 0.2s; }
+.q-textarea:focus { border-color: var(--bordeaux); }
+.q-textarea::placeholder { color: rgba(242,234,216,0.2); }
+
+/* Options */
+.opts { display: flex; flex-direction: column; gap: 8px; }
+.opts.chips { flex-direction: row; flex-wrap: wrap; gap: 8px; }
+.opt-item { display: flex; align-items: flex-start; gap: 14px; padding: 11px 14px; border: 1.5px solid rgba(242,234,216,0.12); cursor: pointer; transition: all 0.15s; background: transparent; }
+.opt-item:hover { border-color: rgba(242,234,216,0.35); }
+.opt-item.selected { border-color: var(--bordeaux); background: rgba(140,14,36,0.12); }
+.opt-dot { width: 16px; height: 16px; min-width: 16px; border-radius: 50%; border: 1.5px solid rgba(242,234,216,0.3); margin-top: 2px; transition: all 0.15s; display: flex; align-items: center; justify-content: center; }
+.opt-item.selected .opt-dot { background: var(--bordeaux); border-color: var(--bordeaux); }
+.opt-item.selected .opt-dot::after { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--cream); }
+.opt-box { width: 16px; height: 16px; min-width: 16px; border: 1.5px solid rgba(242,234,216,0.3); margin-top: 2px; transition: all 0.15s; display: flex; align-items: center; justify-content: center; }
+.opt-item.selected .opt-box { background: var(--bordeaux); border-color: var(--bordeaux); }
+.opt-item.selected .opt-box::after { content: '✓'; font-size: 10px; color: var(--cream); }
+.opt-label { font-size: 14px; line-height: 1.5; }
+.opt-desc { font-size: 12px; color: var(--muted); margin-top: 2px; font-style: italic; }
+.chip-item { padding: 8px 18px; border: 1.5px solid rgba(242,234,216,0.18); font-size: 13px; cursor: pointer; transition: all 0.15s; color: var(--cream); background: transparent; }
+.chip-item:hover { border-color: rgba(242,234,216,0.4); }
+.chip-item.selected { border-color: var(--bordeaux); background: rgba(140,14,36,0.12); }
+.other-input { margin-top: 10px; width: 100%; background: transparent; border: none; border-bottom: 1.5px solid rgba(242,234,216,0.2); color: var(--cream); font-family: 'Jost', sans-serif; font-size: 14px; font-weight: 300; padding: 8px 0; outline: none; transition: border-color 0.2s; display: none; }
+.other-input.visible { display: block; }
+.other-input::placeholder { color: rgba(242,234,216,0.2); }
+.other-input:focus { border-bottom-color: var(--bordeaux); }
+
+/* Buttons */
+.btn-next { padding: 13px 36px; background: var(--bordeaux); color: var(--cream); border: none; font-family: 'Jost', sans-serif; font-size: 12px; font-weight: 400; letter-spacing: 0.14em; text-transform: uppercase; cursor: pointer; transition: background 0.2s, opacity 0.2s; }
+.btn-next:hover { background: #a81a30; }
+.btn-next:disabled { opacity: 0.3; cursor: default; }
+.btn-row { display: flex; align-items: center; gap: 16px; margin-top: 20px; }
+.skip-link { font-size: 12px; color: var(--muted); cursor: pointer; letter-spacing: 0.06em; transition: color 0.2s; border: none; background: none; font-family: 'Jost', sans-serif; padding: 0; }
+.skip-link:hover { color: var(--cream); }
+
+/* Done */
+#screen-done { text-align: center; overflow: hidden; justify-content: center; align-items: center; }
+#screen-done::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 60% 60% at 50% 50%, rgba(140,14,36,0.15) 0%, transparent 70%); pointer-events: none; }
+.done-divider { width: 32px; height: 1px; background: var(--bordeaux); margin: 0 auto 28px; position: relative; }
+.done-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(28px, 4vw, 40px); font-weight: 300; font-style: italic; color: var(--cream); margin-bottom: 20px; position: relative; }
+.done-text { font-size: 14px; color: var(--muted); max-width: 420px; margin: 0 auto; line-height: 1.9; position: relative; }
+.done-sig { margin-top: 44px; font-size: 11px; letter-spacing: 0.14em; color: var(--gold); opacity: 0.6; text-transform: uppercase; position: relative; }
+
+@media (max-width: 480px) {
+  .screen { padding: 50px 20px 20px; }
+  .screen-q { padding-top: 50px; }
+  .q-text { font-size: 20px; }
+  .opt-item { padding: 10px 12px; }
+}
+</style>
+</head>
+<body>
+
+<div id="progress-bar" style="width:0%"></div>
+<button id="btn-back" onclick="goBack()">Назад</button>
+<div id="step-counter"></div>
+
+<!-- COVER -->
+<div class="screen active" id="screen-cover">
+  <div class="scatter s1">Яку версію себе мені зараз цікаво дослідити?</div>
+  <div class="scatter s2">Який маленький експеримент я готова зробити?</div>
+  <div class="scatter s3">В яке з можливих «я» я готова інвестувати час?</div>
+  <div class="scatter s4">Що я хочу перевірити наступні 8 тижнів?</div>
+  <div class="scatter s5">Від чого мене вже давно тягне — але я ще не пробувала?</div>
+  <div class="scatter s6">Що б я зробила, якби точно не провалилась?</div>
+  <div class="scatter s7">Яке «можливе я» лякає і водночас приваблює?</div>
+  <div class="scatter s8">Що говорять мої дії — а не мої думки?</div>
+  <div class="cover-eyebrow">Анна Саєнко · Мастермайнд</div>
+  <h1 class="cover-title">Анкета учасниці<br><em>«Ким я хочу бути,<br>коли виросту»</em></h1>
+  <div class="cover-divider"></div>
+  <p class="cover-sub">Відповіді допоможуть <strong>сформувати групу</strong>, де тобі буде комфортно і цікаво.<br><br>Немає правильних або неправильних відповідей — тільки чесні.</p>
+  <div class="cover-time">⏱ ~7–8 хвилин · 19 питань</div>
+  <button class="btn-start" onclick="startForm()">Почати →</button>
+</div>
+
+<div id="q-screens"></div>
+
+<!-- DONE -->
+<div class="screen" id="screen-done">
+  <div class="done-divider"></div>
+  <h2 class="done-title">Дякую, що відповіла чесно</h2>
+  <p class="done-text">Я уважно прочитаю кожну анкету і формуватиму групи так, щоб кожній учасниці було комфортно і цікаво працювати саме з цими людьми.<br><br>Група невелика — до 8 осіб. Якщо я не напишу, це означає, що цього разу не склалась група, в якій тобі було б добре. Не відмова — просто не той момент і не той склад.</p>
+  <p class="done-sig">@saienko.anna</p>
+</div>
+
+<script>
+const WEB3FORMS_KEY = '2181fe28-43d4-4714-a900-545478a11551';
+
+const questions = [
+  { id:1,  type:'text',         label:'Як тебе звати?', ph:"Ім'я та прізвище", required:true },
+  { id:2,  type:'email',        label:'Email', ph:'your@email.com', required:true },
+  { id:3,  type:'text',         label:'Telegram-нік або номер телефону', hint:"Для зв'язку щодо групи", ph:'@username або +380…', required:true },
+  { id:4,  type:'chips',        label:'Скільки тобі років?', opts:['до 25','25\u201329','30\u201335','36\u201340','41\u201345','46\u201350','50+'], required:true },
+  { id:5,  type:'text',         label:'Де ти зараз?', hint:'Місто і країна — важливо для підбору часу зустрічей', ph:'Київ / Варшава / Берлін…', required:true },
+  { id:6,  type:'single-other', label:'В якій сфері ти зараз працюєш?', opts:['IT / Tech','Маркетинг / PR','Фінанси / Банківська','Юриспруденція','HR / L&D','Освіта / Наука','Медицина / Здоров\'я','Дизайн / Творчість','Консалтинг / Коучинг','Підприємництво','Держсектор / НКО','Ще в пошуку'], required:true },
+  { id:7,  type:'single',       label:'Поточний статус зайнятості', opts:['Найманий працівник (повна зайнятість)','Найманий працівник (неповна зайнятість / фріланс)','Власний бізнес / самозайнятість','У декреті / паузі','Активно шукаю роботу'], required:true },
+  { id:8,  type:'single-desc',  label:'Що найкраще описує твою поточну ситуацію?', hint:'обери одне',
+    opts:[
+      {l:'Я не знаю, куди хочу рухатись — повна невизначеність', d:'Є відчуття, що щось не так, але немає жодного напрямку'},
+      {l:'Є кілька ідей, але не можу вибрати між ними', d:'Варіанти є, але незрозуміло, який правильний'},
+      {l:'Знаю напрямок, але не знаю, як зробити перший крок', d:'Є розуміння «куди», але немає розуміння «як»'},
+      {l:'Вже роблю кроки, але потрібна підтримка і структура', d:'Почала рухатись, але хочу зберегти темп'},
+      {l:'Усе в порядку, але хочу більше — енергії, сенсу, зростання', d:'Не «виживання», а оптимізація і розвиток'},
+    ], required:true },
+  { id:9,  type:'chips',        label:'Як давно ти відчуваєш цей запит?', opts:['Нещодавно (до 3 місяців)','Близько року','1–3 роки','Більше 3 років'], required:true },
+  { id:10, type:'multi',        label:'Що ти вже пробувала?', hint:'можна кілька', opts:['Тести особистості / сильних сторін (MBTI, CliftonStrengths тощо)','Кар\'єрна консультація або коучинг','Нові курси / сертифікати / навчання','Малі експерименти (побічний проєкт, волонтерство, фріланс)','Розмови з людьми в цікавих сферах','Читала книги / дивилась відео на тему кар\'єри','Поки нічого не пробувала'], required:true },
+  { id:11, type:'single',       label:'Який масштаб змін ти відчуваєш як потрібний?', opts:['Підстроїти поточне — більше смислу, кращий баланс, більше зростання у своїй сфері','Поворот — нова роль / галузь, але на базі наявного досвіду','Повне переосмислення — хочу починати щось принципово нове','Поки не знаю — хочу розібратись у процесі'], required:true },
+  { id:12, type:'textarea',     label:'Що ти хочеш перевірити або зробити за ці 2 місяці?', hint:'Не треба ідеальної відповіді. Можна «хочу зрозуміти, чи подобається мені X». Будь-яка гіпотеза підходить.', ph:'Мій запит або гіпотеза для перевірки…', required:true },
+  { id:13, type:'single-other', label:'Яка твоя головна перешкода зараз?', opts:['Не знаю, з чого почати — немає першого кроку','Починаю, але не дотримуюсь — не вистачає послідовності','Страх провалу або «а раптом не вийде»','Немає часу / енергії поряд з основною роботою','Не вистачає оточення — немає кому поговорити, хто розуміє','Надто багато варіантів — паралізує вибір','Інше'], required:true },
+  { id:14, type:'textarea',     label:'Через 2 місяці — за яким результатом ти зрозумієш, що час минув не даремно?', hint:'Навіть якщо результат не грандіозний — «протестувала одну гіпотезу» теж рахується.', ph:'Для мене успіх — це…', required:true },
+  { id:15, type:'multi',        label:'Що для тебе важливо в роботі групи?', hint:'обери 2–3', opts:['Зворотний зв\'язок — хочу чути чесну думку, не лише підтримку','Підтримка і безпека — місце, де можна говорити про сумніви без осуду','Структура і звітність — щоб хтось «тримав» мене до плану','Нетворкінг — хочу познайомитись з людьми з нових сфер','Ідеї і перспективи — подивитись на свою ситуацію очима інших','Натхнення — бачити, як інші рухаються і не здаються'], required:true },
+  { id:16, type:'multi',        label:'Що може вибити тебе з рівноваги в груповій роботі?', hint:'можна кілька', opts:['Хтось займає весь ефір і не дає слова іншим','Поверхнева розмова — хочу глибини, а не small talk','Надмірна критика без підтримки','Тільки «все добре» без чесності','Сильна різниця в рівні залученості (хтось не готується, не приходить)','Мені нічого з цього не заважає'], required:true },
+  { id:17, type:'multi-tz',     label:'Які слоти тобі підходять для щотижневих зустрічей?', hint:'Зустрічі тривають 2 години, пн / ср / пт. Час за Києвом. Можна кілька.', opts:['Пн 11:00–13:00','Пн 14:00–16:00','Пн 16:00–18:00','Ср 11:00–13:00','Ср 14:00–16:00','Ср 16:00–18:00','Пт 11:00–13:00','Пт 14:00–16:00','Пт 16:00–18:00','Гнучка — перша половина дня (до 13:00)','Гнучка — друга половина дня (13:00–18:00)','Підлаштуюсь під графік групи'], required:true },
+  { id:18, type:'single',       label:'На що ти готова між сесіями?', opts:['Мінімально — тільки приходити на зустрічі','Помірно — 1–2 години на тиждень на рефлексію і маленький крок','Активно — готова до реального експерименту щотижня'], required:true },
+  { id:19, type:'textarea',     label:'Що ще важливо знати про тебе, щоб підібрати правильну групу?', hint:'Необов\'язкове поле — але часто саме тут пишуть найцікавіше.', ph:'Тут можна написати будь-що…', required:false },
+];
+
+let current = -1;
+const answers = {};
+const TOTAL = questions.length;
+
+function buildScreens() {
+  const container = document.getElementById('q-screens');
+  questions.forEach((q, i) => {
+    const div = document.createElement('div');
+    div.className = 'screen screen-q';
+    div.id = `screen-q${i}`;
+    div.innerHTML = buildQuestion(q, i);
+    container.appendChild(div);
+  });
+}
+
+function buildQuestion(q, idx) {
+  const hint = q.hint ? `<div class="q-hint">${q.hint}</div>` : '';
+  let body = '';
+
+  if (q.type === 'text' || q.type === 'email') {
+    body = `<input class="q-input" id="inp-${idx}" type="${q.type==='email'?'email':'text'}" placeholder="${q.ph||''}"
+      oninput="textChanged(${idx})" onkeydown="if(event.key==='Enter'){event.preventDefault();tryNext(${idx})}">
+    <div class="btn-row"><button class="btn-next" id="btn-next-${idx}" onclick="tryNext(${idx})" disabled>Далі →</button></div>`;
+  } else if (q.type === 'textarea') {
+    const skip = !q.required ? `<button class="skip-link" onclick="skipQ(${idx})">Пропустити</button>` : '';
+    body = `<textarea class="q-textarea" id="inp-${idx}" placeholder="${q.ph||''}" oninput="textChanged(${idx})"></textarea>
+    <div class="btn-row"><button class="btn-next" id="btn-next-${idx}" onclick="tryNext(${idx})" ${q.required?'disabled':''}>Далі →</button>${skip}</div>`;
+  } else if (q.type === 'chips') {
+    const chips = q.opts.map((o,oi)=>`<div class="chip-item" id="chip-${idx}-${oi}" onclick="selectChip(${idx},${oi},this.textContent)">${o}</div>`).join('');
+    body = `<div class="opts chips">${chips}</div>`;
+  } else if (q.type === 'single') {
+    const opts = q.opts.map((o,oi)=>`<div class="opt-item" id="opt-${idx}-${oi}" onclick="selectSingle(${idx},${oi},${JSON.stringify(o)})">
+      <div class="opt-dot"></div><div class="opt-label">${o}</div></div>`).join('');
+    body = `<div class="opts">${opts}</div>`;
+  } else if (q.type === 'single-desc') {
+    const opts = q.opts.map((o,oi)=>`<div class="opt-item" id="opt-${idx}-${oi}" onclick="selectSingle(${idx},${oi},${JSON.stringify(o.l)})">
+      <div class="opt-dot"></div><div><div class="opt-label">${o.l}</div><div class="opt-desc">${o.d}</div></div></div>`).join('');
+    body = `<div class="opts">${opts}</div>`;
+  } else if (q.type === 'single-other') {
+    const opts = q.opts.map((o,oi)=>`<div class="opt-item" id="opt-${idx}-${oi}" onclick="selectSingleOther(${idx},${oi},${JSON.stringify(o)})">
+      <div class="opt-dot"></div><div class="opt-label">${o}</div></div>`).join('');
+    body = `<div class="opts">${opts}</div>
+    <input class="other-input" id="other-${idx}" placeholder="Уточни…" oninput="otherChanged(${idx})">
+    <div class="btn-row"><button class="btn-next" id="btn-next-${idx}" onclick="tryNext(${idx})" disabled>Далі →</button></div>`;
+  } else if (q.type === 'multi') {
+    const opts = q.opts.map((o,oi)=>`<div class="opt-item" id="opt-${idx}-${oi}" onclick="toggleMulti(${idx},${oi},${JSON.stringify(o)})">
+      <div class="opt-box"></div><div class="opt-label">${o}</div></div>`).join('');
+    body = `<div class="opts">${opts}</div>
+    <div class="btn-row"><button class="btn-next" id="btn-next-${idx}" onclick="tryNext(${idx})" disabled>Далі →</button></div>`;
+  } else if (q.type === 'multi-tz') {
+    const opts = q.opts.map((o,oi)=>`<div class="opt-item" id="opt-${idx}-${oi}" onclick="toggleMultiTZ(${idx},${oi},${JSON.stringify(o)})">
+      <div class="opt-box"></div><div class="opt-label">${o}</div></div>`).join('');
+    body = `<div class="opts">${opts}</div>
+    <input class="q-input" id="tz-${idx}" placeholder="Часовий пояс, якщо ти поза Україною…" style="margin-top:14px;font-size:14px;">
+    <div class="btn-row"><button class="btn-next" id="btn-next-${idx}" onclick="tryNextTZ(${idx})" disabled>Далі →</button></div>`;
+  }
+
+  return `
+    <div class="q-header">
+      <div class="q-num-label">Питання ${idx+1} з ${TOTAL}</div>
+      <div class="q-text">${q.label}</div>
+      ${hint}
+      <div class="q-divider"></div>
+    </div>
+    <div class="q-body">${body}</div>`;
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active','exit-up'));
+  const el = document.getElementById(id);
+  if (el) { el.classList.add('active'); const b = el.querySelector('.q-body'); if(b) b.scrollTop=0; }
+  const isQ = id.startsWith('screen-q');
+  document.getElementById('btn-back').style.display = (id!=='screen-cover'&&id!=='screen-done') ? 'block' : 'none';
+  document.getElementById('step-counter').style.display = isQ ? 'block' : 'none';
+  if (isQ) {
+    const idx = parseInt(id.replace('screen-q',''));
+    document.getElementById('progress-bar').style.width = (idx/TOTAL*100)+'%';
+    document.getElementById('step-counter').innerHTML = `<span>${idx+1}</span> / ${TOTAL}`;
+    setTimeout(()=>{ const inp = el.querySelector('.q-input,.q-textarea'); if(inp) inp.focus(); }, 380);
+  } else if (id==='screen-done') {
+    document.getElementById('progress-bar').style.width = '100%';
+  } else {
+    document.getElementById('progress-bar').style.width = '0%';
+  }
+}
+
+function startForm() { current=0; showScreen('screen-q0'); }
+function goNext() { current < TOTAL-1 ? (current++, showScreen(`screen-q${current}`)) : submitForm(); }
+function goBack() { current===0 ? (current=-1, showScreen('screen-cover')) : (current--, showScreen(`screen-q${current}`)); }
+
+function tryNext(idx) {
+  const btn = document.getElementById(`btn-next-${idx}`);
+  if (btn?.disabled) return;
+  const inp = document.getElementById(`inp-${idx}`);
+  if (inp) answers[`q${idx+1}`] = inp.value;
+  goNext();
+}
+function tryNextTZ(idx) {
+  const btn = document.getElementById(`btn-next-${idx}`);
+  if (btn?.disabled) return;
+  const tz = document.getElementById(`tz-${idx}`);
+  if (tz?.value) answers[`q${idx+1}`] = (answers[`q${idx+1}`]||'') + ' | Пояс: ' + tz.value;
+  goNext();
+}
+function skipQ(idx) { answers[`q${idx+1}`]=''; goNext(); }
+
+function textChanged(idx) {
+  const inp = document.getElementById(`inp-${idx}`);
+  const btn = document.getElementById(`btn-next-${idx}`);
+  if (btn) btn.disabled = !inp?.value.trim();
+}
+function otherChanged(idx) {
+  const inp = document.getElementById(`other-${idx}`);
+  const btn = document.getElementById(`btn-next-${idx}`);
+  if (btn) btn.disabled = !answers[`q${idx+1}`] && !inp?.value.trim();
+}
+
+function selectChip(idx, oi, val) {
+  document.querySelectorAll(`[id^="chip-${idx}-"]`).forEach(c=>c.classList.remove('selected'));
+  document.getElementById(`chip-${idx}-${oi}`).classList.add('selected');
+  answers[`q${idx+1}`]=val;
+  setTimeout(goNext,280);
+}
+function selectSingle(idx, oi, val) {
+  document.querySelectorAll(`[id^="opt-${idx}-"]`).forEach(o=>o.classList.remove('selected'));
+  document.getElementById(`opt-${idx}-${oi}`).classList.add('selected');
+  answers[`q${idx+1}`]=val;
+  setTimeout(goNext,280);
+}
+function selectSingleOther(idx, oi, val) {
+  document.querySelectorAll(`[id^="opt-${idx}-"]`).forEach(o=>o.classList.remove('selected'));
+  document.getElementById(`opt-${idx}-${oi}`).classList.add('selected');
+  const otherInp = document.getElementById(`other-${idx}`);
+  const btn = document.getElementById(`btn-next-${idx}`);
+  if (val==='Інше') {
+    otherInp.classList.add('visible'); otherInp.focus();
+    answers[`q${idx+1}`]=''; if(btn) btn.disabled=true;
+  } else {
+    otherInp.classList.remove('visible');
+    answers[`q${idx+1}`]=val; if(btn) btn.disabled=false;
+  }
+}
+
+const multiSelections={};
+function toggleMulti(idx, oi, val) {
+  if (!multiSelections[idx]) multiSelections[idx]=new Set();
+  const el=document.getElementById(`opt-${idx}-${oi}`);
+  multiSelections[idx].has(val) ? (multiSelections[idx].delete(val), el.classList.remove('selected')) : (multiSelections[idx].add(val), el.classList.add('selected'));
+  answers[`q${idx+1}`]=[...multiSelections[idx]].join('; ');
+  const btn=document.getElementById(`btn-next-${idx}`);
+  if(btn) btn.disabled=multiSelections[idx].size===0;
+}
+function toggleMultiTZ(idx, oi, val) { toggleMulti(idx, oi, val); }
+
+async function submitForm() {
+  showScreen('screen-done');
+  const payload = { access_key: WEB3FORMS_KEY, subject: 'Нова анкета мастермайнд — ' + (answers['q1']||'?') };
+  questions.forEach((q,i) => { payload[`${i+1}. ${q.label}`] = answers[`q${i+1}`]||'—'; });
+  try {
+    const res = await fetch('https://api.web3forms.com/submit', {
+      method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload)
+    });
+    if (!res.ok) console.warn('Web3Forms response:', res.status);
+  } catch(e) {
+    // Silently fail in sandboxed environments (e.g. iframe preview).
+    // Submissions will work correctly when form is hosted on a real domain.
+    console.warn('Submit blocked in preview:', e.message);
+  }
+}
+
+buildScreens();
+</script>
+</body>
+</html>
