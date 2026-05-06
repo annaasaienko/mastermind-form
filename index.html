@@ -6,103 +6,239 @@
 <title>Анкета · Мастермайнд «Ким я хочу бути»</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-:root { --ink:#0f0d0b; --cream:#f2ead8; --bordeaux:#8c0e24; --gold:#b8945a; --muted:rgba(242,234,216,0.5); }
-*{box-sizing:border-box;margin:0;padding:0;}
-html,body{height:100%;background:var(--ink);color:var(--cream);font-family:'Jost',sans-serif;font-weight:300;font-size:16px;line-height:1.6;overflow:hidden;}
-#progress-bar{position:fixed;top:0;left:0;height:2px;background:var(--bordeaux);transition:width .4s ease;z-index:100;}
-#btn-back{position:fixed;top:20px;left:24px;background:none;border:none;color:var(--muted);font-family:'Jost',sans-serif;font-size:12px;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;padding:8px 0;transition:color .2s;z-index:100;display:none;}
-#btn-back:hover{color:var(--cream);}
-#btn-back::before{content:'← ';}
-#step-counter{position:fixed;top:20px;right:24px;font-size:11px;letter-spacing:.14em;color:var(--muted);z-index:100;display:none;}
-#step-counter span{color:var(--bordeaux);}
+:root {
+  --ink: #0f0d0b;
+  --cream: #f2ead8;
+  --bordeaux: #8c0e24;
+  --gold: #b8945a;
+  --muted: rgba(242,234,216,0.5);
+  --faint: rgba(242,234,216,0.12);
+}
 
-.screen{position:fixed;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:60px 40px 40px;opacity:0;pointer-events:none;transform:translateY(24px);transition:opacity .35s ease,transform .35s ease;min-height:100dvh;}
-.screen.active{opacity:1;pointer-events:all;transform:translateY(0);}
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
-/* Cover */
-#screen-cover{text-align:center;overflow:hidden;}
-#screen-cover::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 40%,rgba(140,14,36,.18) 0%,transparent 70%);pointer-events:none;}
-.scatter{position:absolute;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:12px;font-weight:300;color:rgba(242,234,216,.1);white-space:nowrap;pointer-events:none;}
-.s1{top:8%;left:-1%;transform:rotate(-7deg);font-size:13px}
-.s2{top:15%;right:-3%;transform:rotate(5deg);color:rgba(184,148,90,.15)}
-.s3{top:30%;left:-5%;transform:rotate(-4deg)}
-.s4{bottom:30%;right:-2%;transform:rotate(8deg);color:rgba(184,148,90,.12)}
-.s5{bottom:18%;left:-2%;transform:rotate(-6deg);font-size:13px}
-.s6{top:52%;right:-1%;transform:rotate(4deg)}
-.s7{top:68%;left:-3%;transform:rotate(-9deg);color:rgba(184,148,90,.11)}
-.s8{bottom:8%;right:3%;transform:rotate(4deg)}
-.cover-eyebrow{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--bordeaux);margin-bottom:28px;position:relative;}
-.cover-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:clamp(28px,4.5vw,46px);line-height:1.2;position:relative;max-width:600px;}
-.cover-title em{font-style:italic;color:var(--gold);}
-.cover-divider{width:48px;height:1px;background:var(--bordeaux);margin:24px auto;position:relative;}
-.cover-sub{font-size:14px;color:var(--muted);max-width:400px;line-height:1.8;position:relative;}
-.cover-sub strong{color:var(--cream);font-weight:400;}
-.cover-time{margin-top:28px;font-size:12px;letter-spacing:.1em;color:var(--gold);opacity:.7;position:relative;}
-.btn-start{margin-top:36px;padding:14px 44px;background:var(--bordeaux);color:var(--cream);border:none;font-family:'Jost',sans-serif;font-size:12px;font-weight:400;letter-spacing:.16em;text-transform:uppercase;cursor:pointer;transition:background .2s;position:relative;}
-.btn-start:hover{background:#a81a30;}
+html, body {
+  height: 100%;
+  background: var(--ink);
+  color: var(--cream);
+  font-family: 'Jost', sans-serif;
+  font-weight: 300;
+  font-size: 16px;
+  line-height: 1.6;
+  overflow: hidden;
+}
 
-/* Question layout */
-.screen-q{justify-content:flex-start;padding-top:56px;padding-bottom:0;}
-.q-header{flex-shrink:0;width:100%;max-width:620px;padding:16px 0 12px;}
-.q-num-label{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--bordeaux);margin-bottom:14px;}
-.q-text{font-family:'Cormorant Garamond',serif;font-size:clamp(20px,3vw,30px);font-weight:300;line-height:1.3;color:var(--cream);margin-bottom:4px;}
-.q-hint{font-size:12px;color:var(--muted);font-style:italic;margin-top:4px;}
-.q-divider{width:100%;height:1px;background:rgba(242,234,216,.08);margin:12px 0 0;}
-.q-body{flex:1;width:100%;max-width:620px;overflow-y:auto;padding:16px 2px 32px;}
-.q-body::-webkit-scrollbar{width:3px;}
-.q-body::-webkit-scrollbar-thumb{background:rgba(242,234,216,.12);}
+#progress-bar {
+  position: fixed; top: 0; left: 0;
+  height: 2px; background: var(--bordeaux);
+  transition: width 0.4s ease; z-index: 100;
+}
 
-/* Inputs */
-.q-input{display:block;width:100%;background:transparent;border:none;border-bottom:1.5px solid rgba(242,234,216,.25);color:var(--cream);font-family:'Jost',sans-serif;font-size:18px;font-weight:300;padding:12px 0;outline:none;transition:border-color .2s;}
-.q-input:focus{border-bottom-color:var(--bordeaux);}
-.q-input::placeholder{color:rgba(242,234,216,.2);}
-.q-textarea{display:block;width:100%;background:rgba(242,234,216,.05);border:1.5px solid rgba(242,234,216,.15);color:var(--cream);font-family:'Jost',sans-serif;font-size:15px;font-weight:300;padding:16px;outline:none;resize:vertical;min-height:90px;line-height:1.7;transition:border-color .2s;}
-.q-textarea:focus{border-color:var(--bordeaux);}
-.q-textarea::placeholder{color:rgba(242,234,216,.2);}
+#btn-back {
+  position: fixed; top: 20px; left: 24px;
+  background: none; border: none; color: var(--muted);
+  font-family: 'Jost', sans-serif; font-size: 12px;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  cursor: pointer; padding: 8px 0; transition: color 0.2s;
+  z-index: 100; display: none;
+}
+#btn-back:hover { color: var(--cream); }
+#btn-back::before { content: '← '; }
 
-/* Options */
-.opts{display:flex;flex-direction:column;gap:8px;}
-.opts.chips{flex-direction:row;flex-wrap:wrap;gap:8px;}
-.opt-item{display:flex;align-items:flex-start;gap:14px;padding:11px 14px;border:1.5px solid rgba(242,234,216,.12);cursor:pointer;transition:all .15s;background:transparent;user-select:none;}
-.opt-item:hover{border-color:rgba(242,234,216,.35);}
-.opt-item.selected{border-color:var(--bordeaux);background:rgba(140,14,36,.12);}
-.opt-dot{width:16px;height:16px;min-width:16px;border-radius:50%;border:1.5px solid rgba(242,234,216,.3);margin-top:2px;transition:all .15s;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-.opt-item.selected .opt-dot{background:var(--bordeaux);border-color:var(--bordeaux);}
-.opt-item.selected .opt-dot::after{content:'';width:6px;height:6px;border-radius:50%;background:var(--cream);}
-.opt-box{width:16px;height:16px;min-width:16px;border:1.5px solid rgba(242,234,216,.3);margin-top:2px;transition:all .15s;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-.opt-item.selected .opt-box{background:var(--bordeaux);border-color:var(--bordeaux);}
-.opt-item.selected .opt-box::after{content:'✓';font-size:10px;color:var(--cream);}
-.opt-label{font-size:14px;line-height:1.5;}
-.opt-desc{font-size:12px;color:var(--muted);margin-top:2px;font-style:italic;}
-.chip-item{padding:8px 18px;border:1.5px solid rgba(242,234,216,.18);font-size:13px;cursor:pointer;transition:all .15s;color:var(--cream);background:transparent;user-select:none;}
-.chip-item:hover{border-color:rgba(242,234,216,.4);}
-.chip-item.selected{border-color:var(--bordeaux);background:rgba(140,14,36,.12);}
-.other-input{margin-top:10px;width:100%;background:transparent;border:none;border-bottom:1.5px solid rgba(242,234,216,.2);color:var(--cream);font-family:'Jost',sans-serif;font-size:14px;font-weight:300;padding:8px 0;outline:none;transition:border-color .2s;display:none;}
-.other-input.visible{display:block;}
-.other-input::placeholder{color:rgba(242,234,216,.2);}
-.other-input:focus{border-bottom-color:var(--bordeaux);}
+#step-counter {
+  position: fixed; top: 20px; right: 24px;
+  font-size: 11px; letter-spacing: 0.14em;
+  color: var(--muted); z-index: 100; display: none;
+}
+#step-counter span { color: var(--bordeaux); }
 
-/* Buttons */
-.btn-next{padding:13px 36px;background:var(--bordeaux);color:var(--cream);border:none;font-family:'Jost',sans-serif;font-size:12px;font-weight:400;letter-spacing:.14em;text-transform:uppercase;cursor:pointer;transition:background .2s,opacity .2s;}
-.btn-next:hover{background:#a81a30;}
-.btn-next:disabled{opacity:.3;cursor:default;}
-.btn-row{display:flex;align-items:center;gap:16px;margin-top:20px;}
-.skip-link{font-size:12px;color:var(--muted);cursor:pointer;letter-spacing:.06em;transition:color .2s;border:none;background:none;font-family:'Jost',sans-serif;padding:0;}
-.skip-link:hover{color:var(--cream);}
+/* ── Screens ── */
+.screen {
+  position: fixed; inset: 0;
+  display: flex; flex-direction: column;
+  justify-content: center; align-items: center;
+  padding: 60px 40px 40px;
+  opacity: 0; pointer-events: none;
+  transform: translateY(24px);
+  transition: opacity 0.35s ease, transform 0.35s ease;
+  min-height: 100dvh;
+}
+.screen.active { opacity: 1; pointer-events: all; transform: translateY(0); }
 
-/* Done */
-#screen-done{text-align:center;overflow:hidden;justify-content:center;align-items:center;}
-#screen-done::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 60% at 50% 50%,rgba(140,14,36,.15) 0%,transparent 70%);pointer-events:none;}
-.done-divider{width:32px;height:1px;background:var(--bordeaux);margin:0 auto 28px;position:relative;}
-.done-title{font-family:'Cormorant Garamond',serif;font-size:clamp(28px,4vw,40px);font-weight:300;font-style:italic;color:var(--cream);margin-bottom:20px;position:relative;}
-.done-text{font-size:14px;color:var(--muted);max-width:420px;margin:0 auto;line-height:1.9;position:relative;}
-.done-sig{margin-top:44px;font-size:11px;letter-spacing:.14em;color:var(--gold);opacity:.6;text-transform:uppercase;position:relative;}
+/* ── Cover ── */
+#screen-cover { text-align: center; overflow: hidden; }
+#screen-cover::before {
+  content: ''; position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 40%, rgba(140,14,36,0.18) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 40% at 20% 80%, rgba(184,148,90,0.08) 0%, transparent 60%);
+  pointer-events: none;
+}
 
-@media(max-width:480px){
-  .screen{padding:50px 20px 20px;}
-  .screen-q{padding-top:50px;}
-  .q-text{font-size:20px;}
-  .opt-item{padding:10px 12px;}
+.scatter {
+  position: absolute; font-family: 'Cormorant Garamond', serif;
+  font-style: italic; font-size: 12px; font-weight: 300;
+  color: rgba(242,234,216,0.1); white-space: nowrap; pointer-events: none;
+}
+.s1 { top: 8%;  left: -1%;  transform: rotate(-7deg); font-size: 13px; }
+.s2 { top: 15%; right: -3%; transform: rotate(5deg);  color: rgba(184,148,90,0.15); }
+.s3 { top: 30%; left: -5%;  transform: rotate(-4deg); }
+.s4 { bottom: 30%; right: -2%; transform: rotate(8deg); color: rgba(184,148,90,0.12); }
+.s5 { bottom: 18%; left: -2%; transform: rotate(-6deg); font-size: 13px; }
+.s6 { top: 52%;  right: -1%; transform: rotate(4deg); }
+.s7 { top: 68%;  left: -3%;  transform: rotate(-9deg); color: rgba(184,148,90,0.11); }
+.s8 { bottom: 8%; right: 3%; transform: rotate(4deg); }
+
+.cover-eyebrow { font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--bordeaux); margin-bottom: 28px; position: relative; }
+.cover-title { font-family: 'Cormorant Garamond', serif; font-weight: 300; font-size: clamp(30px, 5vw, 50px); line-height: 1.2; position: relative; max-width: 600px; }
+.cover-title em { font-style: italic; color: var(--gold); }
+.cover-divider { width: 48px; height: 1px; background: var(--bordeaux); margin: 28px auto; position: relative; }
+.cover-sub { font-size: 14px; color: var(--muted); max-width: 400px; line-height: 1.8; position: relative; }
+.cover-sub strong { color: var(--cream); font-weight: 400; }
+.cover-time { margin-top: 36px; font-size: 12px; letter-spacing: 0.1em; color: var(--gold); opacity: 0.7; position: relative; }
+
+.btn-start {
+  margin-top: 44px; padding: 14px 44px;
+  background: var(--bordeaux); color: var(--cream); border: none;
+  font-family: 'Jost', sans-serif; font-size: 12px; font-weight: 400;
+  letter-spacing: 0.16em; text-transform: uppercase;
+  cursor: pointer; transition: background 0.2s; position: relative;
+}
+.btn-start:hover { background: #a81a30; }
+
+/* ── Question layout: fixed header + scrollable body ── */
+.screen-q { justify-content: flex-start; padding-top: 56px; padding-bottom: 0; }
+
+.q-header {
+  flex-shrink: 0; width: 100%; max-width: 620px;
+  padding: 16px 0 12px;
+}
+.q-num-label { font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--bordeaux); margin-bottom: 14px; }
+.q-text { font-family: 'Cormorant Garamond', serif; font-size: clamp(22px, 3.5vw, 32px); font-weight: 300; line-height: 1.3; color: var(--cream); margin-bottom: 4px; }
+.q-hint { font-size: 12px; color: var(--muted); font-style: italic; margin-top: 4px; }
+.q-divider { width: 100%; height: 1px; background: rgba(242,234,216,0.08); margin: 12px 0 0; }
+
+.q-body {
+  flex: 1; width: 100%; max-width: 620px;
+  overflow-y: auto; padding: 16px 2px 32px;
+}
+.q-body::-webkit-scrollbar { width: 3px; }
+.q-body::-webkit-scrollbar-thumb { background: rgba(242,234,216,0.15); }
+
+/* ── Inputs ── */
+.q-input {
+  display: block; width: 100%; background: transparent;
+  border: none; border-bottom: 1.5px solid rgba(242,234,216,0.25);
+  color: var(--cream); font-family: 'Jost', sans-serif;
+  font-size: 18px; font-weight: 300; padding: 12px 0;
+  outline: none; transition: border-color 0.2s;
+}
+.q-input:focus { border-bottom-color: var(--bordeaux); }
+.q-input::placeholder { color: rgba(242,234,216,0.2); }
+
+.q-textarea {
+  display: block; width: 100%;
+  background: rgba(242,234,216,0.05);
+  border: 1.5px solid rgba(242,234,216,0.15);
+  color: var(--cream); font-family: 'Jost', sans-serif;
+  font-size: 15px; font-weight: 300; padding: 16px;
+  outline: none; resize: vertical; min-height: 100px;
+  line-height: 1.7; transition: border-color 0.2s;
+}
+.q-textarea:focus { border-color: var(--bordeaux); }
+.q-textarea::placeholder { color: rgba(242,234,216,0.2); }
+
+/* ── Options ── */
+.opts { display: flex; flex-direction: column; gap: 10px; }
+.opts.chips { flex-direction: row; flex-wrap: wrap; gap: 8px; }
+
+.opt-item {
+  display: flex; align-items: flex-start; gap: 14px;
+  padding: 12px 16px; border: 1.5px solid rgba(242,234,216,0.12);
+  cursor: pointer; transition: all 0.15s; background: transparent;
+  user-select: none;
+}
+.opt-item:hover { border-color: rgba(242,234,216,0.35); }
+.opt-item.selected { border-color: var(--bordeaux); background: rgba(140,14,36,0.12); }
+
+.opt-dot {
+  width: 16px; height: 16px; min-width: 16px; flex-shrink: 0;
+  border-radius: 50%; border: 1.5px solid rgba(242,234,216,0.3);
+  margin-top: 2px; transition: all 0.15s;
+  display: flex; align-items: center; justify-content: center;
+}
+.opt-item.selected .opt-dot { background: var(--bordeaux); border-color: var(--bordeaux); }
+.opt-item.selected .opt-dot::after { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--cream); }
+
+.opt-box {
+  width: 16px; height: 16px; min-width: 16px; flex-shrink: 0;
+  border: 1.5px solid rgba(242,234,216,0.3); margin-top: 2px;
+  transition: all 0.15s; display: flex; align-items: center; justify-content: center;
+}
+.opt-item.selected .opt-box { background: var(--bordeaux); border-color: var(--bordeaux); }
+.opt-item.selected .opt-box::after { content: '✓'; font-size: 10px; color: var(--cream); }
+
+.opt-label { font-size: 14px; line-height: 1.5; }
+.opt-desc { font-size: 12px; color: var(--muted); margin-top: 2px; font-style: italic; }
+
+.chip-item {
+  padding: 8px 18px; border: 1.5px solid rgba(242,234,216,0.18);
+  font-size: 13px; cursor: pointer; transition: all 0.15s;
+  color: var(--cream); background: transparent; user-select: none;
+}
+.chip-item:hover { border-color: rgba(242,234,216,0.4); }
+.chip-item.selected { border-color: var(--bordeaux); background: rgba(140,14,36,0.12); }
+
+.other-input {
+  margin-top: 12px; width: 100%; background: transparent;
+  border: none; border-bottom: 1.5px solid rgba(242,234,216,0.2);
+  color: var(--cream); font-family: 'Jost', sans-serif;
+  font-size: 14px; font-weight: 300; padding: 8px 0;
+  outline: none; transition: border-color 0.2s; display: none;
+}
+.other-input.visible { display: block; }
+.other-input::placeholder { color: rgba(242,234,216,0.2); }
+.other-input:focus { border-bottom-color: var(--bordeaux); }
+
+/* ── Buttons ── */
+.btn-next {
+  padding: 13px 36px; background: var(--bordeaux); color: var(--cream);
+  border: none; font-family: 'Jost', sans-serif; font-size: 12px;
+  font-weight: 400; letter-spacing: 0.14em; text-transform: uppercase;
+  cursor: pointer; transition: background 0.2s, opacity 0.2s;
+}
+.btn-next:hover { background: #a81a30; }
+.btn-next:disabled { opacity: 0.3; cursor: default; }
+
+.btn-row { display: flex; align-items: center; gap: 16px; margin-top: 28px; }
+.skip-link {
+  font-size: 12px; color: var(--muted); cursor: pointer;
+  letter-spacing: 0.06em; transition: color 0.2s;
+  border: none; background: none; font-family: 'Jost', sans-serif; padding: 0;
+}
+.skip-link:hover { color: var(--cream); }
+
+/* ── Done ── */
+#screen-done { text-align: center; overflow: hidden; justify-content: center; align-items: center; }
+#screen-done::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(ellipse 60% 60% at 50% 50%, rgba(140,14,36,0.15) 0%, transparent 70%);
+  pointer-events: none;
+}
+.done-divider { width: 32px; height: 1px; background: var(--bordeaux); margin: 0 auto 28px; position: relative; }
+.done-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(28px, 4vw, 40px); font-weight: 300; font-style: italic; color: var(--cream); margin-bottom: 20px; position: relative; }
+.done-text { font-size: 14px; color: var(--muted); max-width: 420px; margin: 0 auto; line-height: 1.9; position: relative; }
+.done-sig { margin-top: 44px; font-size: 11px; letter-spacing: 0.14em; color: var(--gold); opacity: 0.6; text-transform: uppercase; position: relative; }
+
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(242,234,216,0.15); }
+
+@media (max-width: 480px) {
+  .screen { padding: 50px 20px 20px; }
+  .screen-q { padding-top: 50px; }
+  .q-text { font-size: 22px; }
+  .opt-item { padding: 10px 12px; }
 }
 </style>
 </head>
@@ -112,6 +248,7 @@ html,body{height:100%;background:var(--ink);color:var(--cream);font-family:'Jost
 <button id="btn-back" onclick="goBack()">Назад</button>
 <div id="step-counter"></div>
 
+<!-- COVER -->
 <div class="screen active" id="screen-cover">
   <div class="scatter s1">Яку версію себе мені зараз цікаво дослідити?</div>
   <div class="scatter s2">Який маленький експеримент я готова зробити?</div>
@@ -122,19 +259,29 @@ html,body{height:100%;background:var(--ink);color:var(--cream);font-family:'Jost
   <div class="scatter s7">Яке «можливе я» лякає і водночас приваблює?</div>
   <div class="scatter s8">Що говорять мої дії — а не мої думки?</div>
   <div class="cover-eyebrow">Анна Саєнко · Мастермайнд</div>
-  <h1 class="cover-title">Анкета учасниці<br><em>«Ким я хочу бути,<br>коли виросту»</em></h1>
+  <h1 class="cover-title">
+    Анкета учасниці<br>
+    <em>«Ким я хочу бути,<br>коли виросту»</em>
+  </h1>
   <div class="cover-divider"></div>
-  <p class="cover-sub">Відповіді допоможуть <strong>сформувати групу</strong>, де тобі буде комфортно і цікаво.<br><br>Немає правильних або неправильних відповідей — тільки чесні.</p>
+  <p class="cover-sub">
+    Відповіді допоможуть <strong>сформувати групу</strong>, де тобі буде комфортно і цікаво.<br><br>
+    Немає правильних або неправильних відповідей — тільки чесні.
+  </p>
   <div class="cover-time">⏱ ~7–8 хвилин · 19 питань</div>
   <button class="btn-start" onclick="startForm()">Почати →</button>
 </div>
 
 <div id="q-screens"></div>
 
+<!-- DONE -->
 <div class="screen" id="screen-done">
   <div class="done-divider"></div>
   <h2 class="done-title">Дякую, що відповіла чесно</h2>
-  <p class="done-text">Я уважно прочитаю кожну анкету і формуватиму групи так, щоб кожній учасниці було комфортно і цікаво працювати саме з цими людьми.<br><br>Група невелика — до 8 осіб. Якщо я не напишу, це означає, що цього разу не склалась група, в якій тобі було б добре. Не відмова — просто не той момент і не той склад.</p>
+  <p class="done-text">
+    Я уважно прочитаю кожну анкету і формуватиму групи так, щоб кожній учасниці було комфортно і цікаво працювати саме з цими людьми.<br><br>
+    Група невелика — до 8 осіб. Якщо я не напишу, це означає, що цього разу не склалась група, в якій тобі було б добре. Не відмова — просто не той момент і не той склад.
+  </p>
   <p class="done-sig">@saienko.anna</p>
 </div>
 
@@ -142,11 +289,11 @@ html,body{height:100%;background:var(--ink);color:var(--cream);font-family:'Jost
 const WEB3FORMS_KEY = '2181fe28-43d4-4714-a900-545478a11551';
 
 const questions = [
-  { id:1,  type:'text',        label:'Як тебе звати?', ph:"Ім'я та прізвище", required:true },
+  { id:1,  type:'text',        label:'Як тебе звати?', ph:"Ім\u2019я та прізвище", required:true },
   { id:2,  type:'email',       label:'Email', ph:'your@email.com', required:true },
-  { id:3,  type:'text',        label:'Telegram-нік або номер телефону', hint:'Для зв\u2019язку щодо групи', ph:'@username або +380…', required:true },
-  { id:4,  type:'chips',       label:'Скільки тобі років?', opts:['до 25','25–29','30–35','36–40','41–45','46–50','50+'], required:true },
-  { id:5,  type:'text',        label:'Де ти зараз?', hint:'Місто і країна — важливо для підбору часу зустрічей', ph:'Київ / Варшава / Берлін…', required:true },
+  { id:3,  type:'text',        label:'Telegram-нік або номер телефону', hint:'Для зв\u2019язку щодо групи', ph:'@username або +380\u2026', required:true },
+  { id:4,  type:'chips',       label:'Скільки тобі років?', opts:['до 25','25\u201329','30\u201335','36\u201340','41\u201345','46\u201350','50+'], required:true },
+  { id:5,  type:'text',        label:'Де ти зараз?', hint:'Місто і країна — важливо для підбору часу зустрічей', ph:'Київ / Варшава / Берлін\u2026', required:true },
   { id:6,  type:'single-other',label:'В якій сфері ти зараз працюєш?',
     opts:['IT / Tech','Маркетинг / PR','Фінанси / Банківська','Юриспруденція','HR / L&D','Освіта / Наука','Медицина / Здоров\u2019я','Дизайн / Творчість','Консалтинг / Коучинг','Підприємництво','Держсектор / НКО','Ще в пошуку'], required:true },
   { id:7,  type:'single',      label:'Поточний статус зайнятості',
@@ -159,31 +306,37 @@ const questions = [
       {l:'Вже роблю кроки, але потрібна підтримка і структура', d:'Почала рухатись, але хочу зберегти темп'},
       {l:'Усе в порядку, але хочу більше — енергії, сенсу, зростання', d:'Не «виживання», а оптимізація і розвиток'},
     ], required:true },
-  { id:9,  type:'chips',       label:'Як давно ти відчуваєш цей запит?', opts:['Нещодавно (до 3 місяців)','Близько року','1–3 роки','Більше 3 років'], required:true },
+  { id:9,  type:'chips',       label:'Як давно ти відчуваєш цей запит?', opts:['Нещодавно (до 3 місяців)','Близько року','1\u20133 роки','Більше 3 років'], required:true },
   { id:10, type:'multi',       label:'Що ти вже пробувала?', hint:'можна кілька',
     opts:['Тести особистості / сильних сторін (MBTI, CliftonStrengths тощо)','Кар\u2019єрна консультація або коучинг','Нові курси / сертифікати / навчання','Малі експерименти (побічний проєкт, волонтерство, фріланс)','Розмови з людьми в цікавих сферах','Читала книги / дивилась відео на тему кар\u2019єри','Поки нічого не пробувала'], required:true },
   { id:11, type:'single',      label:'Який масштаб змін ти відчуваєш як потрібний?',
     opts:['Підстроїти поточне — більше смислу, кращий баланс, більше зростання у своїй сфері','Поворот — нова роль / галузь, але на базі наявного досвіду','Повне переосмислення — хочу починати щось принципово нове','Поки не знаю — хочу розібратись у процесі'], required:true },
-  { id:12, type:'textarea',    label:'Що ти хочеш перевірити або зробити за ці 2 місяці?', hint:'Не треба ідеальної відповіді. Можна «хочу зрозуміти, чи подобається мені X». Будь-яка гіпотеза підходить.', ph:'Мій запит або гіпотеза для перевірки…', required:true },
+  { id:12, type:'textarea',    label:'Що ти хочеш перевірити або зробити за ці 2 місяці?',
+    hint:'Не треба ідеальної відповіді. Можна «хочу зрозуміти, чи подобається мені X». Будь-яка гіпотеза підходить.',
+    ph:'Мій запит або гіпотеза для перевірки\u2026', required:true },
   { id:13, type:'single-other',label:'Яка твоя головна перешкода зараз?',
     opts:['Не знаю, з чого почати — немає першого кроку','Починаю, але не дотримуюсь — не вистачає послідовності','Страх провалу або «а раптом не вийде»','Немає часу / енергії поряд з основною роботою','Не вистачає оточення — немає кому поговорити, хто розуміє','Надто багато варіантів — паралізує вибір','Інше'], required:true },
-  { id:14, type:'textarea',    label:'Через 2 місяці — за яким результатом ти зрозумієш, що час минув не даремно?', hint:'Навіть якщо результат не грандіозний — «протестувала одну гіпотезу» теж рахується.', ph:'Для мене успіх — це…', required:true },
+  { id:14, type:'textarea',    label:'Через 2 місяці — за яким результатом ти зрозумієш, що час минув не даремно?',
+    hint:'Навіть якщо результат не грандіозний — «протестувала одну гіпотезу» теж рахується.',
+    ph:'Для мене успіх — це\u2026', required:true },
   { id:15, type:'multi',       label:'Що для тебе важливо в роботі групи?', hint:'обери 2–3',
     opts:['Зворотний зв\u2019язок — хочу чути чесну думку, не лише підтримку','Підтримка і безпека — місце, де можна говорити про сумніви без осуду','Структура і звітність — щоб хтось «тримав» мене до плану','Нетворкінг — хочу познайомитись з людьми з нових сфер','Ідеї і перспективи — подивитись на свою ситуацію очима інших','Натхнення — бачити, як інші рухаються і не здаються'], required:true },
   { id:16, type:'multi',       label:'Що може вибити тебе з рівноваги в груповій роботі?', hint:'можна кілька',
     opts:['Хтось займає весь ефір і не дає слова іншим','Поверхнева розмова — хочу глибини, а не small talk','Надмірна критика без підтримки','Тільки «все добре» без чесності','Сильна різниця в рівні залученості (хтось не готується, не приходить)','Мені нічого з цього не заважає'], required:true },
-  { id:17, type:'multi-tz',    label:'Які слоти тобі підходять для щотижневих зустрічей?', hint:'Зустрічі тривають 2 години, пн / ср / пт. Час за Києвом. Можна кілька.',
-    opts:['Пн 11:00–13:00','Пн 14:00–16:00','Пн 16:00–18:00','Ср 11:00–13:00','Ср 14:00–16:00','Ср 16:00–18:00','Пт 11:00–13:00','Пт 14:00–16:00','Пт 16:00–18:00','Гнучка — перша половина дня (до 13:00)','Гнучка — друга половина дня (13:00–18:00)','Підлаштуюсь під графік групи'], required:true },
+  { id:17, type:'multi-tz',    label:'Які слоти тобі підходять для щотижневих зустрічей?',
+    hint:'Зустрічі тривають 2 години, пн / ср / пт. Час за Києвом. Можна кілька.',
+    opts:['Пн 11:00\u201313:00','Пн 14:00\u201316:00','Пн 16:00\u201318:00','Ср 11:00\u201313:00','Ср 14:00\u201316:00','Ср 16:00\u201318:00','Пт 11:00\u201313:00','Пт 14:00\u201316:00','Пт 16:00\u201318:00','Гнучка — перша половина дня (до 13:00)','Гнучка — друга половина дня (13:00\u201318:00)','Підлаштуюсь під графік групи'], required:true },
   { id:18, type:'single',      label:'На що ти готова між сесіями?',
-    opts:['Мінімально — тільки приходити на зустрічі','Помірно — 1–2 години на тиждень на рефлексію і маленький крок','Активно — готова до реального експерименту щотижня'], required:true },
-  { id:19, type:'textarea',    label:'Що ще важливо знати про тебе, щоб підібрати правильну групу?', hint:'Необов\u2019язкове поле — але часто саме тут пишуть найцікавіше.', ph:'Тут можна написати будь-що…', required:false },
+    opts:['Мінімально — тільки приходити на зустрічі','Помірно — 1\u20132 години на тиждень на рефлексію і маленький крок','Активно — готова до реального експерименту щотижня'], required:true },
+  { id:19, type:'textarea',    label:'Що ще важливо знати про тебе, щоб підібрати правильну групу?',
+    hint:'Необов\u2019язкове поле — але часто саме тут пишуть найцікавіше.',
+    ph:'Тут можна написати будь-що\u2026', required:false },
 ];
 
 let current = -1;
 const answers = {};
 const TOTAL = questions.length;
 
-// ── Build all screens ──
 function buildScreens() {
   const container = document.getElementById('q-screens');
   questions.forEach((q, i) => {
@@ -196,15 +349,17 @@ function buildScreens() {
 }
 
 function renderQuestion(container, q, idx) {
-  const hint = q.hint ? `<div class="q-hint">${q.hint}</div>` : '';
-
+  // Header (fixed)
   const header = document.createElement('div');
   header.className = 'q-header';
-  header.innerHTML = `<div class="q-num-label">Питання ${idx+1} з ${TOTAL}</div>
-    <div class="q-text">${q.label}</div>${hint}
+  header.innerHTML = `
+    <div class="q-num-label">Питання ${idx+1} з ${TOTAL}</div>
+    <div class="q-text">${q.label}</div>
+    ${q.hint ? `<div class="q-hint">${q.hint}</div>` : ''}
     <div class="q-divider"></div>`;
   container.appendChild(header);
 
+  // Body (scrollable)
   const body = document.createElement('div');
   body.className = 'q-body';
   container.appendChild(body);
@@ -214,36 +369,35 @@ function renderQuestion(container, q, idx) {
     inp.className = 'q-input';
     inp.type = q.type === 'email' ? 'email' : 'text';
     inp.placeholder = q.ph || '';
-    inp.id = `inp-${idx}`;
-    const btn = makeNextBtn(idx);
-    btn.disabled = true;
+    const btn = makeBtn('Далі →', true);
     inp.addEventListener('input', () => { btn.disabled = !inp.value.trim(); });
-    inp.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); if (!btn.disabled) advance(idx); } });
-    const row = document.createElement('div'); row.className = 'btn-row';
-    row.appendChild(btn);
-    body.appendChild(inp); body.appendChild(row);
+    inp.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); if (!btn.disabled) { answers[`q${idx+1}`] = inp.value; goNext(); } } });
+    btn.addEventListener('click', () => { answers[`q${idx+1}`] = inp.value; goNext(); });
+    const row = makeRow(btn);
+    body.appendChild(inp);
+    body.appendChild(row);
 
   } else if (q.type === 'textarea') {
     const ta = document.createElement('textarea');
     ta.className = 'q-textarea';
     ta.placeholder = q.ph || '';
-    ta.id = `inp-${idx}`;
-    const btn = makeNextBtn(idx);
-    if (q.required) btn.disabled = true;
+    const btn = makeBtn('Далі →', q.required);
     ta.addEventListener('input', () => { if (q.required) btn.disabled = !ta.value.trim(); });
-    const row = document.createElement('div'); row.className = 'btn-row';
-    row.appendChild(btn);
+    btn.addEventListener('click', () => { answers[`q${idx+1}`] = ta.value; goNext(); });
+    const row = makeRow(btn);
     if (!q.required) {
       const skip = document.createElement('button');
       skip.className = 'skip-link'; skip.textContent = 'Пропустити';
       skip.addEventListener('click', () => { answers[`q${idx+1}`] = ''; goNext(); });
       row.appendChild(skip);
     }
-    body.appendChild(ta); body.appendChild(row);
+    body.appendChild(ta);
+    body.appendChild(row);
 
   } else if (q.type === 'chips') {
-    const wrap = document.createElement('div'); wrap.className = 'opts chips';
-    q.opts.forEach((o, oi) => {
+    const wrap = document.createElement('div');
+    wrap.className = 'opts chips';
+    q.opts.forEach(o => {
       const el = document.createElement('div');
       el.className = 'chip-item'; el.textContent = o;
       el.addEventListener('click', () => {
@@ -257,8 +411,9 @@ function renderQuestion(container, q, idx) {
     body.appendChild(wrap);
 
   } else if (q.type === 'single') {
-    const wrap = document.createElement('div'); wrap.className = 'opts';
-    q.opts.forEach((o, oi) => {
+    const wrap = document.createElement('div');
+    wrap.className = 'opts';
+    q.opts.forEach(o => {
       const el = makeOptItem('dot', o);
       el.addEventListener('click', () => {
         wrap.querySelectorAll('.opt-item').forEach(x => x.classList.remove('selected'));
@@ -271,10 +426,15 @@ function renderQuestion(container, q, idx) {
     body.appendChild(wrap);
 
   } else if (q.type === 'single-desc') {
-    const wrap = document.createElement('div'); wrap.className = 'opts';
-    q.opts.forEach((o, oi) => {
-      const el = document.createElement('div'); el.className = 'opt-item';
-      el.innerHTML = `<div class="opt-dot"></div><div><div class="opt-label">${o.l}</div><div class="opt-desc">${o.d}</div></div>`;
+    const wrap = document.createElement('div');
+    wrap.className = 'opts';
+    q.opts.forEach(o => {
+      const el = document.createElement('div');
+      el.className = 'opt-item';
+      const dot = document.createElement('div'); dot.className = 'opt-dot';
+      const txt = document.createElement('div');
+      txt.innerHTML = `<div class="opt-label">${o.l}</div><div class="opt-desc">${o.d}</div>`;
+      el.appendChild(dot); el.appendChild(txt);
       el.addEventListener('click', () => {
         wrap.querySelectorAll('.opt-item').forEach(x => x.classList.remove('selected'));
         el.classList.add('selected');
@@ -286,13 +446,17 @@ function renderQuestion(container, q, idx) {
     body.appendChild(wrap);
 
   } else if (q.type === 'single-other') {
-    const wrap = document.createElement('div'); wrap.className = 'opts';
-    const btn = makeNextBtn(idx); btn.disabled = true;
+    const wrap = document.createElement('div');
+    wrap.className = 'opts';
+    const btn = makeBtn('Далі →', true);
     const otherInp = document.createElement('input');
-    otherInp.className = 'other-input'; otherInp.placeholder = 'Уточни…';
-    otherInp.addEventListener('input', () => { btn.disabled = !otherInp.value.trim(); answers[`q${idx+1}`] = otherInp.value; });
-
-    q.opts.forEach((o, oi) => {
+    otherInp.className = 'other-input'; otherInp.placeholder = 'Уточни\u2026';
+    otherInp.addEventListener('input', () => {
+      answers[`q${idx+1}`] = otherInp.value;
+      btn.disabled = !otherInp.value.trim();
+    });
+    btn.addEventListener('click', () => goNext());
+    q.opts.forEach(o => {
       const el = makeOptItem('dot', o);
       el.addEventListener('click', () => {
         wrap.querySelectorAll('.opt-item').forEach(x => x.classList.remove('selected'));
@@ -307,15 +471,17 @@ function renderQuestion(container, q, idx) {
       });
       wrap.appendChild(el);
     });
-    const row = document.createElement('div'); row.className = 'btn-row'; row.appendChild(btn);
-    body.appendChild(wrap); body.appendChild(otherInp); body.appendChild(row);
+    body.appendChild(wrap);
+    body.appendChild(otherInp);
+    body.appendChild(makeRow(btn));
 
-  } else if (q.type === 'multi' || q.type === 'multi-tz') {
-    const wrap = document.createElement('div'); wrap.className = 'opts';
+  } else if (q.type === 'multi') {
+    const wrap = document.createElement('div');
+    wrap.className = 'opts';
     const selected = new Set();
-    const btn = makeNextBtn(idx); btn.disabled = true;
-
-    q.opts.forEach((o, oi) => {
+    const btn = makeBtn('Далі →', true);
+    btn.addEventListener('click', () => goNext());
+    q.opts.forEach(o => {
       const el = makeOptItem('box', o);
       el.addEventListener('click', () => {
         selected.has(o) ? (selected.delete(o), el.classList.remove('selected')) : (selected.add(o), el.classList.add('selected'));
@@ -324,30 +490,34 @@ function renderQuestion(container, q, idx) {
       });
       wrap.appendChild(el);
     });
+    body.appendChild(wrap);
+    body.appendChild(makeRow(btn));
 
-    const row = document.createElement('div'); row.className = 'btn-row';
-    if (q.type === 'multi-tz') {
-      const tzInp = document.createElement('input');
-      tzInp.className = 'q-input'; tzInp.placeholder = 'Часовий пояс, якщо ти поза Україною…';
-      tzInp.style.cssText = 'margin-top:14px;font-size:14px;';
-      tzInp.id = `tz-${idx}`;
-      btn.addEventListener('click', () => {
-        if (tzInp.value.trim()) answers[`q${idx+1}`] = (answers[`q${idx+1}`]||'') + ' | Пояс: ' + tzInp.value.trim();
-        advance(idx, true);
+  } else if (q.type === 'multi-tz') {
+    const wrap = document.createElement('div');
+    wrap.className = 'opts';
+    const selected = new Set();
+    const btn = makeBtn('Далі →', true);
+    const tzInp = document.createElement('input');
+    tzInp.className = 'q-input'; tzInp.placeholder = 'Часовий пояс, якщо ти поза Україною\u2026';
+    tzInp.style.cssText = 'margin-top:16px;font-size:14px;';
+    btn.addEventListener('click', () => {
+      if (tzInp.value.trim()) answers[`q${idx+1}`] = (answers[`q${idx+1}`] || '') + ' | Пояс: ' + tzInp.value.trim();
+      goNext();
+    });
+    q.opts.forEach(o => {
+      const el = makeOptItem('box', o);
+      el.addEventListener('click', () => {
+        selected.has(o) ? (selected.delete(o), el.classList.remove('selected')) : (selected.add(o), el.classList.add('selected'));
+        answers[`q${idx+1}`] = [...selected].join('; ');
+        btn.disabled = selected.size === 0;
       });
-      row.appendChild(btn);
-      body.appendChild(wrap); body.appendChild(tzInp); body.appendChild(row);
-    } else {
-      row.appendChild(btn);
-      body.appendChild(wrap); body.appendChild(row);
-    }
-    // For multi (non-tz), btn click just advances
-    if (q.type === 'multi') btn.addEventListener('click', () => advance(idx, true));
-    return; // already appended
+      wrap.appendChild(el);
+    });
+    body.appendChild(wrap);
+    body.appendChild(tzInp);
+    body.appendChild(makeRow(btn));
   }
-
-  // Default next button click for non-multi types (text, textarea, single-other)
-  // single / single-desc / chips auto-advance; text/textarea/single-other have inline handlers
 }
 
 function makeOptItem(iconType, label) {
@@ -361,25 +531,17 @@ function makeOptItem(iconType, label) {
   return el;
 }
 
-function makeNextBtn(idx) {
+function makeBtn(text, disabled) {
   const btn = document.createElement('button');
-  btn.className = 'btn-next'; btn.textContent = 'Далі →';
-  btn.addEventListener('click', () => {
-    if (btn.disabled) return;
-    const inp = document.getElementById(`inp-${idx}`);
-    if (inp) answers[`q${idx+1}`] = inp.value;
-    goNext();
-  });
+  btn.className = 'btn-next'; btn.textContent = text; btn.disabled = !!disabled;
   return btn;
 }
 
-// advance helper used where btn is built separately
-function advance(idx, skipInpSave) {
-  if (!skipInpSave) {
-    const inp = document.getElementById(`inp-${idx}`);
-    if (inp) answers[`q${idx+1}`] = inp.value;
-  }
-  goNext();
+function makeRow(...els) {
+  const row = document.createElement('div');
+  row.className = 'btn-row';
+  els.forEach(e => row.appendChild(e));
+  return row;
 }
 
 // ── Navigation ──
@@ -391,10 +553,10 @@ function showScreen(id) {
   document.getElementById('btn-back').style.display = (id !== 'screen-cover' && id !== 'screen-done') ? 'block' : 'none';
   document.getElementById('step-counter').style.display = isQ ? 'block' : 'none';
   if (isQ) {
-    const idx = parseInt(id.replace('screen-q',''));
+    const idx = parseInt(id.replace('screen-q', ''));
     document.getElementById('progress-bar').style.width = (idx / TOTAL * 100) + '%';
     document.getElementById('step-counter').innerHTML = `<span>${idx+1}</span> / ${TOTAL}`;
-    setTimeout(() => { const inp = el && el.querySelector('.q-input,.q-textarea'); if (inp) inp.focus(); }, 380);
+    setTimeout(() => { const inp = el && el.querySelector('.q-input, .q-textarea'); if (inp) inp.focus(); }, 380);
   } else if (id === 'screen-done') {
     document.getElementById('progress-bar').style.width = '100%';
   } else {
@@ -413,7 +575,7 @@ async function submitForm() {
   questions.forEach((q, i) => { payload[`${i+1}. ${q.label}`] = answers[`q${i+1}`] || '—'; });
   try {
     const res = await fetch('https://api.web3forms.com/submit', {
-      method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload)
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
     });
     if (!res.ok) console.warn('Web3Forms:', res.status);
   } catch(e) { console.warn('Submit blocked in preview:', e.message); }
